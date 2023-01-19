@@ -15,7 +15,7 @@ type Modeler[Raw RawData] interface {
 
 // TODO: Is this needed since we moved to `any`?
 type RawData interface {
-	RawReceipt | RawWhenCount | RawNamedBlock | RawBlock | RawBlockCount | RawTraceAction | RawTraceResult | RawFunction
+	RawReceipt | RawWhenCount | RawNamedBlock | RawBlock | RawBlockCount | RawTraceAction | RawTraceResult | RawFunction | RawParameter
 }
 
 type Model struct {
@@ -123,15 +123,3 @@ type Wei = big.Int
 type Gas = uint64
 type Blknum = uint64
 type Topic = string
-
-type SimpleParameter struct {
-	ParameterType string            `json:"parameterType"`
-	Name          string            `json:"name"`
-	StrDefault    string            `json:"strDefault"`
-	Value         string            `json:"value"`
-	Indexed       bool              `json:"indexed"`
-	InternalType  string            `json:"internalType"`
-	Components    []SimpleParameter `json:"components"`
-	Unused        bool              `json:"unused"`
-	IsFlags       uint64            `json:"is_flags"`
-}
