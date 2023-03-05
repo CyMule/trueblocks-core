@@ -48,7 +48,7 @@ func IsProxy(chain string, address types.Address, block *types.SimpleNamedBlock)
 	for _, potentialAddress := range potentialAddresses {
 		isContract, err := IsContractAt(chain, potentialAddress, block)
 		if err != nil {
-			break
+			return types.Address{}, err
 		}
 
 		if isContract {
@@ -77,7 +77,7 @@ func getKnownImplementationSlots(chain string, address types.Address, block *typ
 	eip1822Slot := common.HexToHash("0xc5f16f0fcc639fa48a6947836d9850f504798523bf8c9a3a87d5876cf622bcf7")
 	eip1822ZOSSlot := common.HexToHash("0x5f3b5dfeb7b28cdbd7faba78963ee202a494e2a2cc8c9978d5e30d2aebb8c197")
 	// This is the slot used by the OpenZeppelin GnosisSafeProxy
-	zeroSlot := common.HexToHash("0x0000000000000000000000000000000000000000000000000000000000000000")
+	zeroSlot := common.HexToHash("0x0")
 	slots := []common.Hash{eip1967Slot, eip1967ZOSSlot, eip1822Slot, eip1822ZOSSlot, zeroSlot}
 
 	for _, slot := range slots {
@@ -89,16 +89,11 @@ func getKnownImplementationSlots(chain string, address types.Address, block *typ
 		)
 		// In theory all storage slots are 32 bytes, but we should check in case
 		if err != nil || len(slotStorage) < 20 {
-			break
+			return nil, err
 		}
 		// convert []byte to hex string, get the last 20 bytes, and convert to address
 		potentialAddress := types.HexToAddress(fmt.Sprintf("0x%x", slotStorage[len(slotStorage)-20:]))
 		addresses = append(addresses, potentialAddress)
-	}
-
-	if err != nil {
-		addresses = []types.Address{}
-		return
 	}
 
 	return
